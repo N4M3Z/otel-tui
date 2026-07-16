@@ -1,0 +1,53 @@
+# Fork release config for N4M3Z/otel-tui.
+# A verbatim rebuild of upstream ymtdzzz/otel-tui (Apache-2.0) at a stable commit
+# past the 0.7.3 release; no source changes. Publishes darwin/linux archives and a
+# Homebrew formula to N4M3Z/homebrew-tap. Docker publishing is intentionally omitted
+# (we do not own the ymtdzzz Docker Hub namespace).
+#
+# Release:  GITHUB_TOKEN=$(gh auth token) TAP_GITHUB_TOKEN=$(gh auth token) \
+#             goreleaser release --config .goreleaser.n4m3z.yaml --clean
+version: 1
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+brews:
+  - name: otel-tui
+    repository:
+      owner: N4M3Z
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    homepage: "https://github.com/ymtdzzz/otel-tui"
+    description: "Terminal OpenTelemetry viewer (fork rebuild of ymtdzzz/otel-tui, Apache-2.0)"
+    license: "Apache-2.0"
+    skip_upload: false
+    caveats: "Rebuild of upstream ymtdzzz/otel-tui at a stable commit past 0.7.3; no code changes."
+
+release:
+  prerelease: auto
