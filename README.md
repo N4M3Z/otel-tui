@@ -48,8 +48,10 @@ Flags:
 
 ### Homebrew
 
+This fork publishes prebuilt binaries through its own tap:
+
 ```sh
-$ brew install ymtdzzz/tap/otel-tui
+$ brew install N4M3Z/homebrew-tap/otel-tui
 ```
 
 ### go install
